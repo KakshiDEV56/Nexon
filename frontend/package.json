@@ -1,0 +1,93 @@
+{
+  "name": "nexon",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "lint": "npx eslint src/**",
+    "prettier": "npx prettier --write **/*.{ts,js,css,html,tsx}",
+    "compile": "tsc",
+    "workflow": "yarn compile && yarn prettier && yarn lint && yarn test --watchAll=false",
+    "cypress": "npx cypress open"
+  },
+  "dependencies": {
+    "@chakra-ui/react": "^2.7.1",
+    "@chakra-ui/theme-tools": "^2.0.18",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@tanstack/react-query": "^4.29.15",
+    "@testing-library/jest-dom": "^5.16.5",
+    "axios": "^1.4.0",
+    "chakra-ui-autocomplete": "^1.4.5",
+    "dayjs": "^1.11.8",
+    "formik": "^2.4.2",
+    "framer-motion": "^10.12.17",
+    "msw": "^1.2.2",
+    "react": "^18.2.0",
+    "react-color": "^2.19.3",
+    "react-contexify": "^5.0.0",
+    "react-dom": "^18.2.0",
+    "react-easy-crop": "^4.7.5",
+    "react-icons": "4.10.1",
+    "react-infinite-scroll-component": "^6.1.0",
+    "react-router-dom": "^6.14.0",
+    "react-scripts": "5.0.1",
+    "react-textarea-autosize": "^8.5.0",
+    "reconnecting-websocket": "^4.4.0",
+    "yup": "^1.2.0",
+    "zustand": "^4.3.8"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^9.3.1",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/react-hooks": "^8.0.1",
+    "@testing-library/user-event": "^14.4.3",
+    "@types/node": "^20.3.1",
+    "@types/react": "^18.2.14",
+    "@types/react-color": "^3.0.6",
+    "@types/react-dom": "^18.2.6",
+    "@types/react-router-dom": "^5.3.3",
+    "@typescript-eslint/eslint-plugin": "^5.60.0",
+    "@typescript-eslint/parser": "^5.60.0",
+    "cypress": "12.15.0",
+    "eslint": "^8.43.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-import-resolver-typescript": "^3.5.5",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^2.8.8",
+    "react-test-renderer": "^18.2.0",
+    "typescript": "^4.9.5"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.[t|j]sx?$": "babel-jest"
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!axios)/"
+    ]
+  }
+}
