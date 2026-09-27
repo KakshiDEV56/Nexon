@@ -1,0 +1,8 @@
+.git
+.github
+.env
+.env.*
+*.md
+**/*_test.go
+**/mocks
+.air.toml

@@ -1,0 +1,66 @@
+name: nexon
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: nexon
+      POSTGRES_PASSWORD: nexon
+      POSTGRES_DB: nexon
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nexon -d nexon"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  backend:
+    image: ghcr.io/kakshidev56/nexon-backend:latest
+    build:
+      context: ./backend
+    environment:
+      GIN_MODE: release
+      PORT: "4000"
+      DATABASE_URL: postgresql://nexon:nexon@postgres:5432/nexon?sslmode=disable
+      REDIS_URL: redis://redis:6379/0
+      SECRET: ${NEXON_SECRET:-dev-only-session-secret}
+      CORS_ORIGIN: http://localhost:3000
+      HANDLER_TIMEOUT: "5"
+      MAX_BODY_BYTES: "4194304"
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY:-}
+      BUCKET_NAME: ${BUCKET_NAME:-}
+      REGION: ${REGION:-}
+      GMAIL_USER: ${GMAIL_USER:-}
+      GMAIL_PASSWORD: ${GMAIL_PASSWORD:-}
+    ports:
+      - "4000:4000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  frontend:
+    image: ghcr.io/kakshidev56/nexon-frontend:latest
+    build:
+      context: ./frontend
+      args:
+        REACT_APP_API: http://localhost:4000
+        REACT_APP_WS: ws://localhost:4000/ws
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
