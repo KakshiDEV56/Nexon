@@ -27,7 +27,7 @@ const links = [
 ];
 
 export const Footer: React.FC = () => (
-  <Flex bottom={0} as="footer" align="center" justify="center" w="100%" p={8}>
+  <Flex bottom={0} as="footer" align="center" justify="center" w="100%" p={8} bg="#000">
     <Box textAlign="center">
       <Text fontSize="xl">
         <span>Nexon | 2026</span>

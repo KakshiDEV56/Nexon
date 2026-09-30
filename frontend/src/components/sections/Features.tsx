@@ -16,6 +16,7 @@ const MotionBox = motion(Box);
 
 const features = [
   {
+    id: 'messages',
     question: 'Messages move at the speed of thought',
     answer:
       'Your words arrive the instant you hit send — no refreshes, no delays. ' +
@@ -23,6 +24,7 @@ const features = [
       'so nothing gets lost in transit.',
   },
   {
+    id: 'spaces',
     question: 'Your space, your rules',
     answer:
       'Build dedicated spaces for your team, friend group, or growing community. ' +
@@ -30,6 +32,7 @@ const features = [
       'always knows where to look.',
   },
   {
+    id: 'sync',
     question: 'Switch devices. Never miss a beat.',
     answer:
       'Pick up exactly where you left off — whether you\'re on your phone, tablet, ' +
@@ -37,6 +40,7 @@ const features = [
       'the moment they happen.',
   },
   {
+    id: 'scale',
     question: 'Grows with you, never against you',
     answer:
       'Whether you\'re 10 people or 10,000, Nexon\'s infrastructure holds up. ' +
@@ -46,7 +50,7 @@ const features = [
 ];
 
 export const Features: React.FC = () => (
-  <Box w="full" px={{ base: 4, md: 8 }} py={24} bg="#09090b">
+  <Box id="features" w="full" px={{ base: 4, md: 8 }} py={24} bg="#000">
     <Flex direction="column" align="center" mb={16}>
       <Heading
         as="h3"
@@ -73,9 +77,9 @@ export const Features: React.FC = () => (
       w="full"
       maxW="800px"
       mx="auto"
-      bg="#09090b"
+      bg="#050505"
       borderRadius="12px"
-      border="1px solid #27272a"
+      border="1px solid #1c1c1c"
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -85,9 +89,11 @@ export const Features: React.FC = () => (
       <Accordion allowMultiple>
         {features.map((feature, i) => (
           <AccordionItem
+            id={feature.id}
             key={feature.question}
             border="none"
-            borderBottom={i === features.length - 1 ? 'none' : '1px solid #27272a'}
+            borderBottom={i === features.length - 1 ? 'none' : '1px solid #1c1c1c'}
+            scrollMarginTop="24px"
           >
             <AccordionButton py={4} _hover={{ bg: 'transparent' }} color="#fafafa">
               <Box flex="1" textAlign="left" fontWeight="500">

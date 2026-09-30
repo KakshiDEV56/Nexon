@@ -1,150 +1,194 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Box, Button, Flex, Heading, Image, Link as CLink, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Heading, Link as CLink, Stack, Text } from '@chakra-ui/react';
+import { keyframes } from '@emotion/react';
 import { motion } from 'framer-motion';
+import { ParticleSphere } from './ParticleSphere';
 
-const MotionBox = motion(Box);
-const MotionHeading = motion(Heading);
 const MotionStack = motion(Stack);
 
+const float = keyframes`
+  0%, 100% { transform: translateY(0); opacity: 0.45; }
+  50% { transform: translateY(6px); opacity: 1; }
+`;
+
 interface HeroProps {
-  title: string;
-  headline?: string;
+  lines: string[];
   subtitle: string;
-  image: string;
-  ctaLink: string;
-  ctaText: string;
+  primaryText: string;
+  primaryLink: string;
+  secondaryText: string;
+  secondaryLink: string;
 }
 
-export const Hero: React.FC<HeroProps> = ({ title, headline, subtitle, image, ctaLink, ctaText, ...rest }) => (
+export const Hero: React.FC<HeroProps> = ({
+  lines,
+  subtitle,
+  primaryText,
+  primaryLink,
+  secondaryText,
+  secondaryLink,
+}) => (
   <Flex
-    align="center"
-    justify="space-between"
-    direction={{ base: 'column-reverse', md: 'row' }}
-    wrap="nowrap"
-    minH="80vh"
+    as="section"
+    position="relative"
+    align={{ base: 'flex-end', lg: 'center' }}
+    minH="100vh"
     w="full"
-    px={{ base: 4, md: 8 }}
-    mb={16}
-    {...rest}
+    overflow="hidden"
+    px={{ base: 6, md: 12, xl: 20 }}
+    pb={{ base: 28, lg: 0 }}
+    pt={{ base: 32, lg: 0 }}
   >
+    <Box position="absolute" top={0} right={0} zIndex={0} h="100%" w={{ base: '100%', lg: '62%' }}>
+      <ParticleSphere />
+    </Box>
+    <Box
+      position="absolute"
+      inset={0}
+      zIndex={1}
+      pointerEvents="none"
+      bg={{
+        base: 'linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.72) 58%, #000 100%)',
+        lg: 'linear-gradient(90deg, #000 0%, rgba(0,0,0,0.72) 34%, rgba(0,0,0,0.15) 58%, rgba(0,0,0,0) 72%)',
+      }}
+    />
+
     <MotionStack
-      spacing={6}
-      w={{ base: '100%', md: '50%' }}
-      align={['center', 'center', 'flex-start', 'flex-start']}
-      initial={{ opacity: 0, y: 30 }}
+      spacing={{ base: 6, lg: 7 }}
+      position="relative"
+      w={{ base: '100%', lg: '46%' }}
+      maxW="640px"
+      zIndex={2}
+      align="flex-start"
+      initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: 'easeOut' }}
     >
-      <MotionHeading
+      <Heading
         as="h1"
-        fontSize={{ base: '48px', md: '64px', lg: '80px' }}
-        fontWeight="600"
-        letterSpacing="-0.8px"
-        lineHeight="1.04"
-        color="#fafafa"
-        textAlign={['center', 'center', 'left', 'left']}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-      >
-        {title}
-      </MotionHeading>
-
-      {headline && (
-        <MotionHeading
-          as="h2"
-          fontSize={{ base: '24px', md: '36px', lg: '40px' }}
-          fontWeight="600"
-          lineHeight={1.2}
-          color="#fafafa"
-          textAlign={['center', 'center', 'left', 'left']}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-        >
-          {headline}
-        </MotionHeading>
-      )}
-      
-      <MotionHeading
-        as="h3"
-        fontSize={{ base: '18px', md: '20px', lg: '22px' }}
-        opacity="0.8"
+        fontSize={{ base: '52px', md: '72px', xl: '92px' }}
         fontWeight="500"
-        lineHeight={1.40}
-        color="brandGray.accent"
-        textAlign={['center', 'center', 'left', 'left']}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.4 }}
-        maxW="90%"
+        letterSpacing="-2.4px"
+        lineHeight="0.92"
+        color="#fafafa"
+      >
+        {lines.map((line) => (
+          <Box as="span" key={line} display="block">
+            {line}
+          </Box>
+        ))}
+      </Heading>
+
+      <Text
+        fontSize={{ base: '15px', md: '16px' }}
+        fontWeight="400"
+        lineHeight="1.55"
+        color="#a1a1aa"
+        maxW="420px"
       >
         {subtitle}
-      </MotionHeading>
+      </Text>
 
-      <MotionBox
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, delay: 0.6 }}
-        pt={4}
-      >
-        <Link to={ctaLink}>
-          <Button 
-            background="highlight.standard" 
-            color="white" 
-            borderRadius="4px" 
-            py="6" 
-            px="8" 
-            fontSize="16px"
+      <Flex gap={3} wrap="wrap" pt={1}>
+        {primaryLink.startsWith('#') ? (
+          <Button
+            as="a"
+            href={primaryLink}
+            bg="#146ef5"
+            color="white"
+            borderRadius="6px"
+            px="6"
+            h="44px"
+            fontSize="14px"
             fontWeight="500"
-            _hover={{ 
-              bg: 'highlight.hover', 
-              transform: 'translateY(-6px)',
-              boxShadow: '0 20px 40px -10px rgba(20,110,245,0.4)',
-            }}
-            transition="all 0.3s ease-in-out"
+            _hover={{ bg: '#3b89ff' }}
+            _active={{ bg: '#0055d4' }}
+            _focus={{ boxShadow: 'none' }}
           >
-            {ctaText}
+            {primaryText}
           </Button>
-        </Link>
-      </MotionBox>
-      <MotionBox
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: 0.8 }}
-      >
-        <Text fontSize="16px" mt={4} textAlign="center" color="brandGray.accent">
-          Got an account already?{' '}
-          <CLink 
-            as={Link} 
-            to="/login" 
-            ml="1" 
-            color="highlight.standard" 
-            fontWeight="500" 
-            _focus={{ outline: 'none' }} 
-            _hover={{ textDecoration: 'underline' }}
+        ) : (
+          <Button
+            as={Link}
+            to={primaryLink}
+            bg="#146ef5"
+            color="white"
+            borderRadius="6px"
+            px="6"
+            h="44px"
+            fontSize="14px"
+            fontWeight="500"
+            _hover={{ bg: '#3b89ff' }}
+            _active={{ bg: '#0055d4' }}
+            _focus={{ boxShadow: 'none' }}
           >
-            Sign in
-          </CLink>
-        </Text>
-      </MotionBox>
+            {primaryText}
+          </Button>
+        )}
+        {secondaryLink.startsWith('#') ? (
+          <Button
+            as="a"
+            href={secondaryLink}
+            bg="#0c0c0c"
+            color="#fafafa"
+            borderRadius="6px"
+            border="1px solid #2a2a2a"
+            px="6"
+            h="44px"
+            fontSize="14px"
+            fontWeight="500"
+            _hover={{ bg: '#161616', borderColor: '#3a3a3a' }}
+            _active={{ bg: '#000' }}
+            _focus={{ boxShadow: 'none' }}
+          >
+            {secondaryText}
+          </Button>
+        ) : (
+          <Button
+            as={Link}
+            to={secondaryLink}
+            bg="#0c0c0c"
+            color="#fafafa"
+            borderRadius="6px"
+            border="1px solid #2a2a2a"
+            px="6"
+            h="44px"
+            fontSize="14px"
+            fontWeight="500"
+            _hover={{ bg: '#161616', borderColor: '#3a3a3a' }}
+            _active={{ bg: '#000' }}
+            _focus={{ boxShadow: 'none' }}
+          >
+            {secondaryText}
+          </Button>
+        )}
+      </Flex>
     </MotionStack>
-    <MotionBox
-      w={{ base: '80%', sm: '60%', md: '45%' }}
-      mb={{ base: 12, md: 0 }}
-      initial={{ opacity: 0, x: 50, scale: 0.95 }}
-      animate={{ opacity: 1, x: 0, scale: 1 }}
-      transition={{ duration: 1, delay: 0.4, ease: 'easeOut' }}
+
+    <CLink
+      href="#features"
+      position="absolute"
+      bottom={{ base: 6, md: 8 }}
+      left={{ base: 6, md: 12, xl: 20 }}
+      zIndex={2}
+      display="inline-flex"
+      alignItems="center"
+      gap={3}
+      color="#8d8d8d"
+      fontSize="13px"
+      _hover={{ color: '#fafafa', textDecoration: 'none' }}
     >
-      <Box 
-        position="relative" 
-        rounded="8px"
-        p={4}
+      <Box
+        as="span"
+        aria-hidden
+        animation={`${float} 1.6s ease-in-out infinite`}
+        fontSize="16px"
+        lineHeight="1"
       >
-        <Image src={image} w="100%" objectFit="contain" />
+        ↓
       </Box>
-    </MotionBox>
+      Scroll to explore
+    </CLink>
   </Flex>
 );
