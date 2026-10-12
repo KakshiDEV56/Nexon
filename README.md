@@ -64,18 +64,95 @@ A signed-in member can:
 
 Authentication uses server-side sessions stored in Redis. The browser sends the session cookie with `withCredentials`. The API only accepts browser calls from the origin named in `CORS_ORIGIN`.
 
-## How the pieces fit together
+## Architecture and repository structure
+
+### System architecture
+
+The frontend is a React/TypeScript single-page application. It uses HTTP for REST API calls and WebSockets for live events. The Go/Gin backend wires handlers to services and repositories, and uses PostgreSQL for persistent application data and Redis for sessions, reset tokens, and rate limiting.
+
+```mermaid
+flowchart TB
+    Browser["Browser"]
+    subgraph Frontend["frontend/ · React + TypeScript · port 3000"]
+        Routes["Routes and page layouts"]
+        Components["UI components"]
+        Client["API client · React Query · state stores"]
+        SocketClient["WebSocket hooks and clients"]
+        Routes --> Components
+        Components --> Client
+        Components --> SocketClient
+    end
+
+    subgraph Backend["backend/ · Go + Gin · port 4000"]
+        Router["Router and middleware"]
+        Handlers["HTTP handlers"]
+        Services["Service layer"]
+        Repositories["Repository layer"]
+        WS["WebSocket hub and handlers"]
+        Config["Configuration and data-source setup"]
+        Router --> Handlers
+        Handlers --> Services
+        Services --> Repositories
+        Router --> WS
+        Config --> Router
+    end
+
+    Postgres[("PostgreSQL")]
+    Redis[("Redis")]
+
+    Browser --> Frontend
+    Client -->|"HTTP · /api"| Router
+    SocketClient <-->|"WebSocket · /ws"| WS
+    Repositories --> Postgres
+    Services --> Redis
+```
+
+### Source tree at a glance
 
 ```text
-Browser (Nexon frontend, port 3000)
-        |  HTTP  /api
-        |  WebSocket  /ws
-        v
-Nexon backend (port 4000)
-        |                 |
-        v                 v
-   PostgreSQL           Redis
+Nexon/
+├── .github/
+│   └── workflows/
+│       └── publish-images.yml   # Build and publish container images
+├── backend/
+│   ├── main.go                  # Server startup and graceful shutdown
+│   ├── injection.go             # Dependency wiring
+│   ├── data_sources.go          # PostgreSQL / Redis initialization
+│   ├── config/                  # Environment-based configuration
+│   ├── handler/                 # HTTP handlers and middleware
+│   ├── service/                 # Application/business logic
+│   ├── repository/              # Data-access layer
+│   ├── model/                   # Domain models, errors, and fixtures
+│   ├── ws/                      # WebSocket implementation
+│   ├── mocks/                   # Test doubles
+│   ├── Dockerfile
+│   ├── Makefile
+│   └── go.mod
+├── frontend/
+│   ├── public/                  # Static assets and HTML shell
+│   ├── src/
+│   │   ├── routes/              # Application routes
+│   │   ├── components/          # UI, layouts, menus, and modals
+│   │   ├── lib/
+│   │   │   ├── api/             # HTTP clients, DTOs, WebSocket hooks
+│   │   │   ├── models/          # Frontend data types
+│   │   │   ├── stores/          # Client-side state stores
+│   │   │   └── utils/           # Validation and shared utilities
+│   │   └── tests/               # Frontend tests and fixtures
+│   ├── cypress/                 # End-to-end tests
+│   ├── Dockerfile
+│   └── package.json
+├── docker-compose.yml            # Local full-stack environment
+├── README.md
+└── LICENSE
 ```
+
+### Request and event flow
+
+1. The browser loads the frontend on port `3000`.
+2. REST requests go to the Go API on port `4000` under `/api`. The router applies middleware and dispatches to handlers; handlers call services, which use repositories for database operations.
+3. Live updates travel over the WebSocket endpoint `/ws` and are handled by the backend's WebSocket components.
+4. PostgreSQL stores durable application records. Redis supports server-side sessions and short-lived data such as reset tokens and rate-limit state.
 
 The published frontend image is a static React build served by nginx. The API address and the websocket address are compiled into that build. The image published by this repository expects the API at `http://localhost:4000` and the websocket at `ws://localhost:4000/ws`, which matches the ports in `docker-compose.yml`.
 
