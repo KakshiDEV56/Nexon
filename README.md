@@ -71,25 +71,26 @@ Authentication uses server-side sessions stored in Redis. The browser sends the 
 The frontend is a React/TypeScript single-page application. It uses HTTP for REST API calls and WebSockets for live events. The Go/Gin backend wires handlers to services and repositories, and uses PostgreSQL for persistent application data and Redis for sessions, reset tokens, and rate limiting.
 
 ```mermaid
-flowchart TB
+graph TD
     Browser["Browser"]
-    subgraph Frontend["frontend/ · React + TypeScript · port 3000"]
+
+    subgraph Frontend["Frontend: React and TypeScript"]
         Routes["Routes and page layouts"]
         Components["UI components"]
-        Client["API client · React Query · state stores"]
-        SocketClient["WebSocket hooks and clients"]
+        Client["REST API client, React Query, and state stores"]
+        SocketClient["WebSocket client and hooks"]
         Routes --> Components
         Components --> Client
         Components --> SocketClient
     end
 
-    subgraph Backend["backend/ · Go + Gin · port 4000"]
+    subgraph Backend["Backend: Go and Gin"]
         Router["Router and middleware"]
         Handlers["HTTP handlers"]
         Services["Service layer"]
         Repositories["Repository layer"]
         WS["WebSocket hub and handlers"]
-        Config["Configuration and data-source setup"]
+        Config["Configuration and data sources"]
         Router --> Handlers
         Handlers --> Services
         Services --> Repositories
@@ -100,9 +101,9 @@ flowchart TB
     Postgres[("PostgreSQL")]
     Redis[("Redis")]
 
-    Browser --> Frontend
-    Client -->|"HTTP · /api"| Router
-    SocketClient <-->|"WebSocket · /ws"| WS
+    Browser --> Routes
+    Client -->|"HTTP /api"| Router
+    SocketClient -->|"WebSocket /ws"| WS
     Repositories --> Postgres
     Services --> Redis
 ```
