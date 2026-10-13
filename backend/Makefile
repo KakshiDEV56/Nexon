@@ -17,7 +17,7 @@ start:
 	docker start postgres && docker start redis
 
 test:
-	go test -v -cover ./service/... ./handler/...
+	go test -v -cover ./service/... ./handler/... ./model/apperrors/...
 
 e2e:
 	go test github.com/sentrionic/valkyrie
